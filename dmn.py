@@ -8,6 +8,7 @@ tf_config = json.loads(os.environ['TF_CONFIG'])
 cluster_spec = tf_config['cluster'] 
 task_type = tf_config['task']['type']
 task_id = tf_config['task']['index']
+print(tf_config)
 
 #print(task_id)
 #import sys
@@ -17,7 +18,8 @@ task_id = tf_config['task']['index']
 #    cluster_spec=cluster_spec,
 #    task_type=task_type,
 #    task_id=task_id)
-strategy = tf.distribute.MultiWorkerMirroredStrategy()
+communication_options=tf.distribute.experimental.CommunicationOptions(implementation=tf.distribute.experimental.CommunicationImplementation.RING)
+strategy = tf.distribute.MultiWorkerMirroredStrategy(communication_options)
 
 #cluster_resolver = tf.distribute.cluster_resolver.TFConfigClusterResolver()
 #strategy = tf.distribute.MultiWorkerMirroredStrategy(
