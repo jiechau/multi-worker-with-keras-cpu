@@ -6,6 +6,7 @@
 
 git pull
 export TF_ENABLE_ONEDNN_OPTS=0
+export CUDA_VISIBLE_DEVICES=-1
 
 # "172.17.2.15:8090" # ap07
 # "172.17.2.11:8090" # ap06
@@ -30,6 +31,15 @@ else
     export TF_CONFIG="{
         \"cluster\": {
             \"chief\": [\"172.17.2.15:8090\"],
+            \"worker\": [\"172.17.2.11:8090\", \"172.17.2.10:8090\"]
+        },
+        \"task\": {
+            \"type\": \"worker\",
+            \"index\": $1
+        }
+    }"
+    export TF_CONFIG="{
+        \"cluster\": {
             \"worker\": [\"172.17.2.11:8090\", \"172.17.2.10:8090\"]
         },
         \"task\": {

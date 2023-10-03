@@ -29,3 +29,12 @@ export TF_CONFIG='{
     }
 }'
 ```
+
+## ref
+
+https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/tutorials/distribute/multi_worker_with_keras.ipynb#scrollTo=_ESVtyQ9_xjx
+
+
+
+
+

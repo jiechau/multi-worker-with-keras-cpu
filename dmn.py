@@ -13,16 +13,17 @@ task_id = tf_config['task']['index']
 #import sys
 #sys.exit(0)
 
-#strategy = tf.distribute.MultiWorkerMirroredStrategy(
-#    cluster_spec=cluster_spec,
-#    task_type=task_type,
-#    task_id=task_id)
-#strategy = tf.distribute.MultiWorkerMirroredStrategy()
-
-cluster_resolver = tf.distribute.cluster_resolver.TFConfigClusterResolver()
 strategy = tf.distribute.MultiWorkerMirroredStrategy(
-            cluster_resolver=cluster_resolver  
-            )
+    cluster_spec=cluster_spec,
+    task_type=task_type,
+    task_id=task_id)
+strategy = tf.distribute.MultiWorkerMirroredStrategy()
+
+#cluster_resolver = tf.distribute.cluster_resolver.TFConfigClusterResolver()
+#strategy = tf.distribute.MultiWorkerMirroredStrategy(
+#            cluster_resolver=cluster_resolver  
+#            )
+
 with strategy.scope():
 
     # 加载MNIST数据集
