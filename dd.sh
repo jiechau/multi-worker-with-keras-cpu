@@ -37,6 +37,15 @@ else
             \"index\": $1
         }
     }"
+    export TF_CONFIG="{
+        \"cluster\": {
+            \"worker\": [\"172.17.2.11:8090\", \"172.17.2.10:8090\"]
+        },
+        \"task\": {
+            \"type\": \"worker\",
+            \"index\": $1
+        }
+    }"
 fi
 
 python dmn.py
