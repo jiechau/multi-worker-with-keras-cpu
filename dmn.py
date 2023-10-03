@@ -19,7 +19,7 @@ print(tf_config)
 #    task_type=task_type,
 #    task_id=task_id)
 communication_options=tf.distribute.experimental.CommunicationOptions(implementation=tf.distribute.experimental.CommunicationImplementation.RING)
-strategy = tf.distribute.MultiWorkerMirroredStrategy(communication_options)
+strategy = tf.distribute.MultiWorkerMirroredStrategy()
 
 #cluster_resolver = tf.distribute.cluster_resolver.TFConfigClusterResolver()
 #strategy = tf.distribute.MultiWorkerMirroredStrategy(
