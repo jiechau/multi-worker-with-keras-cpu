@@ -63,12 +63,13 @@ with strategy.scope():
     model.add(keras.layers.Dense(10, activation='softmax'))
     '''
     # (2) load
-    model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
+    #model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
     # (3)
-    #checkpoint_dir = '/tmp/ckpt'
-    #checkpoint = tf.train.Checkpoint(model=model)
-    #latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
-    #checkpoint.restore(latest_checkpoint)
+    model = keras.Sequential()
+    checkpoint_dir = '/tmp/ckpt'
+    checkpoint = tf.train.Checkpoint(model=model)
+    latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
+    checkpoint.restore(latest_checkpoint)
 
     # compile
     model.compile(optimizer='adam',
