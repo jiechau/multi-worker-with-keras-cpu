@@ -39,9 +39,11 @@ multi_worker_dataset = tf.data.Dataset.from_tensor_slices(
 
 
 ## one worker down, all stuck.
+## re-start met errors
+## doesn't work
 # Checkpoint saving and restoring
 #callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/my_model_ckpt')]
-callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/my_model_ckpt', save_freq=1000)]
+#callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/my_model_ckpt', save_freq=1000)]
 
 
 # only model build and compile in scope()
@@ -67,9 +69,9 @@ with strategy.scope():
                   metrics=['accuracy'])
 
 #model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
-#model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size))
-# if use callbacks
-model.fit(multi_worker_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size)*10, callbacks=callbacks)
+model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size))
+# callbacks doesn't work
+#model.fit(multi_worker_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size)*10, callbacks=callbacks)
 
 # 评估模型
 loss, accuracy = model.evaluate(x_test, y_test)
