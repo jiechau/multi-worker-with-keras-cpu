@@ -17,24 +17,20 @@ print(tf_config)
 
 communication_options=tf.distribute.experimental.CommunicationOptions(implementation=tf.distribute.experimental.CommunicationImplementation.RING)
 strategy = tf.distribute.MultiWorkerMirroredStrategy()
+# would stop here until every cluster member is ready
 
 #cluster_resolver = tf.distribute.cluster_resolver.TFConfigClusterResolver()
 #strategy = tf.distribute.MultiWorkerMirroredStrategy(cluster_resolver=cluster_resolver)
 
 
-print(strategy.cluster_resolver.task_type)
-print(strategy.cluster_resolver.task_id)
-import sys
-sys.exit(0)
+# 加载MNIST数据集
+(x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+
+# 数据预处理 
+x_train = x_train.reshape(-1, 28, 28, 1).astype("float32") / 255.0
+x_test = x_test.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 
 with strategy.scope():
-
-    # 加载MNIST数据集
-    (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
-
-    # 数据预处理 
-    x_train = x_train.reshape(-1, 28, 28, 1).astype("float32") / 255.0
-    x_test = x_test.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 
     # 构建模型
     model = keras.Sequential()
@@ -51,11 +47,11 @@ with strategy.scope():
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
 
-    model.fit(x_train, y_train, epochs=1)
-    #model.fit(x_train, y_train, epochs=10)
+model.fit(x_train, y_train, epochs=1)
+#model.fit(x_train, y_train, epochs=10)
 
-    # 评估模型
-    loss, accuracy = model.evaluate(x_test, y_test)
-    print(accuracy)
+# 评估模型
+loss, accuracy = model.evaluate(x_test, y_test)
+print(accuracy)
 
-    model.save('/tmp/my_model_mn')
+model.save('/tmp/my_model_mn')
