@@ -1,14 +1,20 @@
-import tensorflow as tf
-from tensorflow import keras
 
 import os
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
+import tensorflow as tf
+from tensorflow import keras
+
 # ndarray, 60000 train, and 10000 test
 (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
 x_train = x_train.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 x_test = x_test.reshape(-1, 28, 28, 1).astype("float32") / 255.0
+# dataset
+per_worker_batch_size = 64
+global_batch_size = per_worker_batch_size * 1
+multi_worker_dataset = tf.data.Dataset.from_tensor_slices(
+      (x_train, y_train)).shuffle(60000).repeat().batch(global_batch_size)
 
 # 构建模型
 model = keras.Sequential()
@@ -26,7 +32,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
-
+#model.fit(multi_worker_dataset, epochs=2, steps_per_epoch=int(60000/global_batch_size))
 
 # 评估模型
 loss, accuracy = model.evaluate(x_test, y_test)

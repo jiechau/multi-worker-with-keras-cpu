@@ -52,7 +52,7 @@ with strategy.scope():
                   metrics=['accuracy'])
 
 #model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
-model.fit(multi_worker_dataset, epochs=2, steps_per_epoch=int(60000/global_batch_size))
+model.fit(multi_worker_dataset, epochs=50, steps_per_epoch=int(60000/global_batch_size))
 
 # 评估模型
 loss, accuracy = model.evaluate(x_test, y_test)
