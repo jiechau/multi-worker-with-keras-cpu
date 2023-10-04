@@ -51,9 +51,9 @@ with strategy.scope():
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
 
-#model.fit(x_train, y_train, epochs=2)
+model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
 #model.fit(x_train, y_train, epochs=10)
-model.fit(multi_worker_dataset, epochs=2, steps_per_epoch=70)
+#model.fit(multi_worker_dataset, epochs=2, steps_per_epoch=70)
 
 # 评估模型
 loss, accuracy = model.evaluate(x_test, y_test)
