@@ -88,7 +88,7 @@ checkpoint_manager = tf.train.CheckpointManager(checkpoint, directory=checkpoint
 # Checkpoint saving and restoring
 #callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/my_model_ckpt')]
 #callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/my_model_ckpt', save_freq=1000)]
-callbacks = [tf.keras.callbacks.BackupAndRestore(checkpoint_manager, save_freq=1000)]
+callbacks = [tf.keras.callbacks.BackupAndRestore(checkpoint_manager)]
 
 
 
