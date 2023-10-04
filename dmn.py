@@ -63,9 +63,16 @@ with strategy.scope():
     model.add(keras.layers.Dense(10, activation='softmax'))
     '''
     # (2) load
-    model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
+    #model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
     # (3)
-    #model = keras.Sequential()
+    model = keras.Sequential()
+    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
+    model.add(keras.layers.MaxPooling2D((2, 2)))
+    model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
+    model.add(keras.layers.MaxPooling2D((2, 2)))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(64, activation='relu'))
+    model.add(keras.layers.Dense(10, activation='softmax'))
 
 
     # compile
@@ -90,4 +97,4 @@ checkpoint_manager.save()
 loss, accuracy = model.evaluate(x_test, y_test)
 print(accuracy)
 
-#model.save('/tmp/my_model_mn')
+model.save('/tmp/my_model_mn')
