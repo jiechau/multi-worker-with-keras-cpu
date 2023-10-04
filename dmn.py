@@ -8,6 +8,7 @@ tf_config = json.loads(os.environ['TF_CONFIG'])
 cluster_spec = tf_config['cluster'] 
 task_type = tf_config['task']['type']
 task_id = tf_config['task']['index']
+num_workers = len(tf_config['cluster']['worker'])
 print(tf_config)
 
 #print(task_id)
@@ -23,12 +24,16 @@ strategy = tf.distribute.MultiWorkerMirroredStrategy()
 #strategy = tf.distribute.MultiWorkerMirroredStrategy(cluster_resolver=cluster_resolver)
 
 
-# 加载MNIST数据集
+# ndarray, 60000 train, and 10000 test
 (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
-
-# 数据预处理 
 x_train = x_train.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 x_test = x_test.reshape(-1, 28, 28, 1).astype("float32") / 255.0
+# dataset
+per_worker_batch_size = 64
+global_batch_size = per_worker_batch_size * num_workers
+multi_worker_dataset = mnist_setup.mnist_dataset(global_batch_size)
+train_dataset = tf.data.Dataset.from_tensor_slices(
+      (x_train, y_train)).shuffle(60000).repeat().batch(batch_size)
 
 with strategy.scope():
 
@@ -47,8 +52,9 @@ with strategy.scope():
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=2)
+#model.fit(x_train, y_train, epochs=2)
 #model.fit(x_train, y_train, epochs=10)
+model.fit(multi_worker_dataset, epochs=2)
 
 # 评估模型
 loss, accuracy = model.evaluate(x_test, y_test)
