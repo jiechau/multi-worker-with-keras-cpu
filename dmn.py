@@ -53,7 +53,7 @@ with strategy.scope():
 
 #model.fit(x_train, y_train, epochs=2)
 #model.fit(x_train, y_train, epochs=10)
-model.fit(multi_worker_dataset, epochs=2)
+model.fit(multi_worker_dataset, epochs=2, steps_per_epoch=70)
 
 # 评估模型
 loss, accuracy = model.evaluate(x_test, y_test)
