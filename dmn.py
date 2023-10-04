@@ -80,7 +80,7 @@ dist_dataset = strategy.experimental_distribute_dataset(multi_worker_dataset)
 #callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir=checkpoint_dir, save_freq=100)]
 
 # ModelCheckpoint 
-callbacks = [tf.keras.callbacks.ModelCheckpoint('/tmp/my_model_h5/model_{epoch}.h5', save_freq='epoch')]
+callbacks = [tf.keras.callbacks.ModelCheckpoint('/tmp/my_model_h5/model_{epoch}', save_freq='epoch')]
 
 
 
