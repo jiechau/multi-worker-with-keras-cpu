@@ -87,8 +87,8 @@ checkpoint_manager = tf.train.CheckpointManager(checkpoint, directory=checkpoint
 ## doesn't work
 # Checkpoint saving and restoring
 #callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/my_model_ckpt')]
-#callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/my_model_ckpt', save_freq=1000)]
-callbacks = [tf.keras.callbacks.BackupAndRestore(checkpoint_manager)]
+callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/ckpt', save_freq=1000)]
+#callbacks = [tf.keras.callbacks.BackupAndRestore(checkpoint_manager)]
 
 
 
@@ -97,7 +97,7 @@ callbacks = [tf.keras.callbacks.BackupAndRestore(checkpoint_manager)]
 #model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
 #model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size))
 # callbacks doesn't work
-model.fit(multi_worker_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
+model.fit(multi_worker_dataset, epochs=5, steps_per_epoch=int(60000/global_batch_size)*5, callbacks=callbacks)
 
 #checkpoint_manager.save()
 
