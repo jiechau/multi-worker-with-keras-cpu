@@ -51,7 +51,9 @@ with strategy.scope():
     # (1) build
     #model = build_model()
     # (2) load
-    model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
+    model = keras.models.load_model('/tmp/my_model_h5/model_9')
+    #model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
+
 
     # compile
     model.compile(optimizer='adam',
