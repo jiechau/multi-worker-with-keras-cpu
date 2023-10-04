@@ -49,9 +49,9 @@ multi_worker_dataset = tf.data.Dataset.from_tensor_slices(
 with strategy.scope():
 
     # (1) build
-    model = build_model()
+    #model = build_model()
     # (2) load
-    #model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
+    model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
 
     # compile
     model.compile(optimizer='adam',
@@ -59,13 +59,14 @@ with strategy.scope():
                   metrics=['accuracy'])
 
 
-# BackupAndRestore
+## BackupAndRestore
 ## one worker down, all stuck.
 ## re-start met errors
 ## doesn't work
 #callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/my_model_ckpt')]
 #
-# ModelCheckpoint 
+## ModelCheckpoint
+## only chief save model
 callbacks = [tf.keras.callbacks.ModelCheckpoint('/tmp/my_model_mn', save_freq='epoch')]
 
 # experimental_distribute_dataset
@@ -74,11 +75,11 @@ dist_dataset = strategy.experimental_distribute_dataset(multi_worker_dataset)
 #model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
 #model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size))
 #model.fit(multi_worker_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
-model.fit(dist_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
+model.fit(dist_dataset, epochs=3, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
 
 # evaluate
 loss, accuracy = model.evaluate(x_test, y_test)
 print(accuracy)
 
-# for mninference.py
+# this way, every worker save model
 # model.save('/tmp/my_model_mn')
