@@ -74,7 +74,8 @@ checkpoint.restore(latest_checkpoint)
 ## doesn't work
 # Checkpoint saving and restoring
 #callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/my_model_ckpt')]
-callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir=checkpoint_dir, save_freq='epoch')]
+callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir=checkpoint_dir)]
+#callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir=checkpoint_dir, save_freq=100)]
 
 
 
