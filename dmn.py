@@ -31,9 +31,8 @@ x_test = x_test.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 # dataset
 per_worker_batch_size = 64
 global_batch_size = per_worker_batch_size * num_workers
-multi_worker_dataset = mnist_setup.mnist_dataset(global_batch_size)
-train_dataset = tf.data.Dataset.from_tensor_slices(
-      (x_train, y_train)).shuffle(60000).repeat().batch(batch_size)
+multi_worker_dataset = tf.data.Dataset.from_tensor_slices(
+      (x_train, y_train)).shuffle(60000).repeat().batch(global_batch_size)
 
 with strategy.scope():
 
