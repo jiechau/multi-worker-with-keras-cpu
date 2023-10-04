@@ -47,7 +47,7 @@ with strategy.scope():
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=1)
+model.fit(x_train, y_train, epochs=2)
 #model.fit(x_train, y_train, epochs=10)
 
 # 评估模型
