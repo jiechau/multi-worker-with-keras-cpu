@@ -1,9 +1,8 @@
 import tensorflow as tf
 from tensorflow import keras
 
-# 加载MNIST数据集
+# ndarray, 60000 train, and 10000 test
 (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
-# 数据预处理 
 x_train = x_train.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 x_test = x_test.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 
@@ -22,8 +21,8 @@ model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=5)
-#model.fit(x_train, y_train, epochs=10)
+model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
+
 
 # 评估模型
 loss, accuracy = model.evaluate(x_test, y_test)
