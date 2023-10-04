@@ -11,9 +11,7 @@ task_id = tf_config['task']['index']
 num_workers = len(tf_config['cluster']['worker'])
 print(tf_config)
 
-#print(task_id)
-#import sys
-#sys.exit(0)
+
 
 
 communication_options = tf.distribute.experimental.CommunicationOptions(implementation=tf.distribute.experimental.CommunicationImplementation.RING) # support CPU
@@ -43,7 +41,6 @@ multi_worker_dataset = tf.data.Dataset.from_tensor_slices(
 with strategy.scope():
 
     # (1) build
-    '''
     model = keras.Sequential()
     model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
     model.add(keras.layers.MaxPooling2D((2, 2)))
@@ -52,19 +49,8 @@ with strategy.scope():
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(64, activation='relu'))
     model.add(keras.layers.Dense(10, activation='softmax'))
-    '''
     # (2) load
     #model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
-    # (3)
-    model = keras.Sequential()
-    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
-    model.add(keras.layers.MaxPooling2D((2, 2)))
-    model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
-    model.add(keras.layers.MaxPooling2D((2, 2)))
-    model.add(keras.layers.Flatten())
-    model.add(keras.layers.Dense(64, activation='relu'))
-    model.add(keras.layers.Dense(10, activation='softmax'))
-
 
     # compile
     model.compile(optimizer='adam',
@@ -75,10 +61,11 @@ with strategy.scope():
 # checkpoint_manager
 checkpoint_dir = '/tmp/ckpt'
 checkpoint = tf.train.Checkpoint(model=model)
+
 latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
 checkpoint.restore(latest_checkpoint)
 
-checkpoint_manager = tf.train.CheckpointManager(checkpoint, directory=checkpoint_dir, max_to_keep=1)
+#checkpoint_manager = tf.train.CheckpointManager(checkpoint, directory=checkpoint_dir, max_to_keep=1)
 
 
 # BackupAndRestore
@@ -87,8 +74,7 @@ checkpoint_manager = tf.train.CheckpointManager(checkpoint, directory=checkpoint
 ## doesn't work
 # Checkpoint saving and restoring
 #callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/my_model_ckpt')]
-callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/ckpt', save_freq=1000)]
-#callbacks = [tf.keras.callbacks.BackupAndRestore(checkpoint_manager)]
+callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir=checkpoint_dir, save_freq=1000)]
 
 
 
@@ -96,13 +82,14 @@ callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/ckpt', save_fr
 
 #model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
 #model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size))
-# callbacks doesn't work
+# callbacks
 model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
 
 #checkpoint_manager.save()
 
-# 评估模型
+# evaluate
 loss, accuracy = model.evaluate(x_test, y_test)
 print(accuracy)
 
+# for mninference.py
 model.save('/tmp/my_model_mn')
