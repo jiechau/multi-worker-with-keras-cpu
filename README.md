@@ -4,13 +4,12 @@
 
 ## run
 
-with an args
-- run 
 - command
 
 ```
-./dd.sh 0
-./dd.sh 1
+git pull; ./dd.sh -1 # for chief
+git pull; ./dd.sh 0 # for worker 0
+git pull; ./dd.sh 1 # for worker 1
 ```
 
 ## memo
