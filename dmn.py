@@ -63,9 +63,9 @@ with strategy.scope():
     model.add(keras.layers.Dense(10, activation='softmax'))
     '''
     # (2) load
-    #model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
+    model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
     # (3)
-    model = keras.Sequential()
+    #model = keras.Sequential()
 
 
     # compile
@@ -90,4 +90,4 @@ checkpoint_manager.save()
 loss, accuracy = model.evaluate(x_test, y_test)
 print(accuracy)
 
-model.save('/tmp/my_model_mn')
+#model.save('/tmp/my_model_mn')
