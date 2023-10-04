@@ -57,7 +57,12 @@ with strategy.scope():
     model.compile(optimizer='adam',
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
+    
+    # Convert to graph to enable optimizations
+    multi_worker_dataset = multi_worker_dataset.as_graph_def().as_graph_element() 
 
+    # experimental_distribute_dataset
+    dist_dataset = strategy.experimental_distribute_dataset(multi_worker_dataset) 
 
 ## BackupAndRestore
 ## one worker down, all stuck.
@@ -69,13 +74,10 @@ with strategy.scope():
 ## only chief save model
 callbacks = [tf.keras.callbacks.ModelCheckpoint('/tmp/my_model_mn', save_freq='epoch')]
 
-# experimental_distribute_dataset
-dist_dataset = strategy.experimental_distribute_dataset(multi_worker_dataset) 
-
 #model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
 #model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size))
-#model.fit(multi_worker_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
-model.fit(dist_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
+model.fit(multi_worker_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
+#model.fit(dist_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
 
 # evaluate
 loss, accuracy = model.evaluate(x_test, y_test)
