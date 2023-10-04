@@ -59,7 +59,7 @@ with strategy.scope():
                   metrics=['accuracy'])
     
     # Convert to graph to enable optimizations
-    multi_worker_dataset = multi_worker_dataset.as_graph_def().as_graph_element() 
+    multi_worker_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).as_graph_def().as_graph_element() 
 
     # experimental_distribute_dataset
     dist_dataset = strategy.experimental_distribute_dataset(multi_worker_dataset) 
