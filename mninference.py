@@ -1,6 +1,10 @@
 import tensorflow as tf
 from tensorflow import keras
 
+import os
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 # 加载已训练好的模型
 model = keras.models.load_model('/tmp/my_model_mn') 
 
