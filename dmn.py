@@ -14,17 +14,18 @@ print(tf_config)
 #import sys
 #sys.exit(0)
 
-#strategy = tf.distribute.MultiWorkerMirroredStrategy(
-#    cluster_spec=cluster_spec,
-#    task_type=task_type,
-#    task_id=task_id)
+
 communication_options=tf.distribute.experimental.CommunicationOptions(implementation=tf.distribute.experimental.CommunicationImplementation.RING)
 strategy = tf.distribute.MultiWorkerMirroredStrategy()
 
 #cluster_resolver = tf.distribute.cluster_resolver.TFConfigClusterResolver()
-#strategy = tf.distribute.MultiWorkerMirroredStrategy(
-#            cluster_resolver=cluster_resolver  
-#            )
+#strategy = tf.distribute.MultiWorkerMirroredStrategy(cluster_resolver=cluster_resolver)
+
+
+print(strategy.cluster_resolver.task_type)
+print(strategy.cluster_resolver.task_id)
+import sys
+sys.exit(0)
 
 with strategy.scope():
 
@@ -50,8 +51,8 @@ with strategy.scope():
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
 
-    #model.fit(x_train, y_train, epochs=1)
-    model.fit(x_train, y_train, epochs=10)
+    model.fit(x_train, y_train, epochs=1)
+    #model.fit(x_train, y_train, epochs=10)
 
     # 评估模型
     loss, accuracy = model.evaluate(x_test, y_test)

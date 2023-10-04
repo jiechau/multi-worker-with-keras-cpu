@@ -20,10 +20,10 @@ model.add(keras.layers.Dense(10, activation='softmax'))
 
 # 编译和训练模型
 model.compile(optimizer='adam',
-                      loss='sparse_categorical_crossentropy',
-                                    metrics=['accuracy'])
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=1)
+model.fit(x_train, y_train, epochs=5)
 #model.fit(x_train, y_train, epochs=10)
 
 # 评估模型
