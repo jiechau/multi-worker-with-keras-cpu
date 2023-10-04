@@ -11,7 +11,16 @@ task_id = tf_config['task']['index']
 num_workers = len(tf_config['cluster']['worker'])
 print(tf_config)
 
-
+def build_model():
+    model = keras.Sequential()
+    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
+    model.add(keras.layers.MaxPooling2D((2, 2)))
+    model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
+    model.add(keras.layers.MaxPooling2D((2, 2)))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(64, activation='relu'))
+    model.add(keras.layers.Dense(10, activation='softmax'))
+    return model
 
 
 communication_options = tf.distribute.experimental.CommunicationOptions(implementation=tf.distribute.experimental.CommunicationImplementation.RING) # support CPU
@@ -36,21 +45,13 @@ multi_worker_dataset = tf.data.Dataset.from_tensor_slices(
       (x_train, y_train)).shuffle(60000).repeat().batch(global_batch_size)
 
 
-
 # only model build and compile in scope()
 with strategy.scope():
 
     # (1) build
-    model = keras.Sequential()
-    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
-    model.add(keras.layers.MaxPooling2D((2, 2)))
-    model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
-    model.add(keras.layers.MaxPooling2D((2, 2)))
-    model.add(keras.layers.Flatten())
-    model.add(keras.layers.Dense(64, activation='relu'))
-    model.add(keras.layers.Dense(10, activation='softmax'))
+    #model = build_model()
     # (2) load
-    #model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
+    model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
 
     # compile
     model.compile(optimizer='adam',
@@ -59,13 +60,14 @@ with strategy.scope():
 
 
 # checkpoint_manager
-checkpoint_dir = '/tmp/ckpt'
-checkpoint = tf.train.Checkpoint(model=model)
-
-latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
-checkpoint.restore(latest_checkpoint)
+#checkpoint_dir = '/tmp/ckpt'
+#checkpoint = tf.train.Checkpoint(model=model)
+#latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
+#checkpoint.restore(latest_checkpoint)
 
 #checkpoint_manager = tf.train.CheckpointManager(checkpoint, directory=checkpoint_dir, max_to_keep=1)
+
+dist_dataset = strategy.experimental_distribute_dataset(multi_worker_dataset) 
 
 
 # BackupAndRestore
@@ -75,8 +77,10 @@ checkpoint.restore(latest_checkpoint)
 # Checkpoint saving and restoring
 #callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir='/tmp/my_model_ckpt')]
 #callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir=checkpoint_dir)]
-callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir=checkpoint_dir, save_freq=100)]
+#callbacks = [tf.keras.callbacks.BackupAndRestore(backup_dir=checkpoint_dir, save_freq=100)]
 
+# ModelCheckpoint
+callbacks = [tf.keras.callbacks.ModelCheckpoint('/tmp/my_model_h5/model_{epoch}.h5', save_freq='epoch')]
 
 
 
