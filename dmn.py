@@ -66,10 +66,18 @@ with strategy.scope():
     #model = keras.models.load_model('/tmp/my_model_mn') # all workers should use chief's version
     # (3)
     model = keras.Sequential()
-    checkpoint_dir = '/tmp/ckpt'
-    checkpoint = tf.train.Checkpoint(model=model)
-    latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
-    checkpoint.restore(latest_checkpoint)
+    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
+    model.add(keras.layers.MaxPooling2D((2, 2)))
+    model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
+    model.add(keras.layers.MaxPooling2D((2, 2)))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(64, activation='relu'))
+    model.add(keras.layers.Dense(10, activation='softmax'))
+
+
+
+
+
 
     # compile
     model.compile(optimizer='adam',
@@ -79,14 +87,14 @@ with strategy.scope():
 
 checkpoint_dir = '/tmp/ckpt'
 checkpoint = tf.train.Checkpoint(model=model)
-checkpoint_manager = tf.train.CheckpointManager(
-    checkpoint, directory=checkpoint_dir, max_to_keep=1)
-checkpoint_manager.save()
+latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
+checkpoint.restore(latest_checkpoint)
 
 #model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
 model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size))
 # callbacks doesn't work
 #model.fit(multi_worker_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size)*10, callbacks=callbacks)
+checkpoint_manager = tf.train.CheckpointManager(checkpoint, directory=checkpoint_dir, max_to_keep=1)
 checkpoint_manager.save()
 
 # 评估模型
