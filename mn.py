@@ -19,7 +19,7 @@ def build_model():
 #    model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
 #    model.add(keras.layers.MaxPooling2D((2, 2)))
 #    model.add(keras.layers.Flatten())
-    model.add(keras.layers.Dense(64, activation='relu'))
+#    model.add(keras.layers.Dense(64, activation='relu'))
     model.add(keras.layers.Dense(10, activation='softmax'))
     return model
 
@@ -53,7 +53,7 @@ callbacks = [tf.keras.callbacks.ModelCheckpoint('/tmp/my_model_mn', save_freq='e
 
 #model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
 #model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size))
-model.fit(multi_worker_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
+model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
 #model.fit(dist_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
 
 # evaluate
