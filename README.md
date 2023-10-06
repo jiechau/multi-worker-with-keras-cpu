@@ -21,6 +21,17 @@ export TF_CONFIG='{
         "worker": ["172.17.2.14:8090", "172.17.2.10:8090"]
     },
     "task": {
+        "type": "cluster",
+        "index": 0
+    }
+}'
+
+export TF_CONFIG='{
+    "cluster": {
+        "chief": ["172.17.2.13:8090"],
+        "worker": ["172.17.2.14:8090", "172.17.2.10:8090"]
+    },
+    "task": {
         "type": "worker",
         "index": 0
     }

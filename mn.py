@@ -18,7 +18,7 @@ def build_model():
 #    model.add(keras.layers.MaxPooling2D((2, 2)))
 #    model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
 #    model.add(keras.layers.MaxPooling2D((2, 2)))
-#    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Flatten())
 #    model.add(keras.layers.Dense(64, activation='relu'))
     model.add(keras.layers.Dense(10, activation='softmax'))
     return model
@@ -28,7 +28,7 @@ def build_model():
 x_train = x_train.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 x_test = x_test.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 # dataset
-num_workers = 1
+num_workers = 2
 per_worker_batch_size = 64
 global_batch_size = per_worker_batch_size * num_workers
 multi_worker_dataset = tf.data.Dataset.from_tensor_slices(
@@ -53,11 +53,12 @@ callbacks = [tf.keras.callbacks.ModelCheckpoint('/tmp/my_model_mn', save_freq='e
 
 #model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
 #model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size))
-model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
+model.fit(multi_worker_dataset, epochs=5, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
 #model.fit(dist_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
 
 # evaluate
 loss, accuracy = model.evaluate(x_test, y_test)
+print('global_batch_size', global_batch_size)
 print(accuracy)
 
 # this way, every worker save model

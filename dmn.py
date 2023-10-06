@@ -11,17 +11,17 @@ task_id = tf_config['task']['index']
 num_workers = len(tf_config['cluster']['worker'])
 print(tf_config)
 
-
-def build_model():
-    model = keras.Sequential()
-    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
+from dmn import build_model
+#def build_model():
+#    model = keras.Sequential()
+#    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
 #    model.add(keras.layers.MaxPooling2D((2, 2)))
 #    model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
 #    model.add(keras.layers.MaxPooling2D((2, 2)))
 #    model.add(keras.layers.Flatten())
-    model.add(keras.layers.Dense(64, activation='relu'))
-    model.add(keras.layers.Dense(10, activation='softmax'))
-    return model
+#    model.add(keras.layers.Dense(64, activation='relu'))
+#    model.add(keras.layers.Dense(10, activation='softmax'))
+#    return model
 
 
 communication_options = tf.distribute.experimental.CommunicationOptions(implementation=tf.distribute.experimental.CommunicationImplementation.RING) # support CPU
@@ -39,6 +39,7 @@ strategy = tf.distribute.MultiWorkerMirroredStrategy(communication_options=commu
 x_train = x_train.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 x_test = x_test.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 # dataset
+#num_workers = 2
 per_worker_batch_size = 64
 global_batch_size = per_worker_batch_size * num_workers
 multi_worker_dataset = tf.data.Dataset.from_tensor_slices(
@@ -76,7 +77,7 @@ callbacks = [tf.keras.callbacks.ModelCheckpoint('/tmp/my_model_mn', save_freq='e
 
 #model.fit(x_train, y_train, epochs=2, batch_size=64) # default batch_size=32
 #model.fit(multi_worker_dataset, epochs=1, steps_per_epoch=int(60000/global_batch_size))
-model.fit(multi_worker_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
+model.fit(multi_worker_dataset, epochs=5, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
 #model.fit(dist_dataset, epochs=10, steps_per_epoch=int(60000/global_batch_size), callbacks=callbacks)
 
 # evaluate
