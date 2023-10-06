@@ -28,7 +28,7 @@ def build_model():
 x_train = x_train.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 x_test = x_test.reshape(-1, 28, 28, 1).astype("float32") / 255.0
 # dataset
-num_workers = 2
+num_workers = 6
 per_worker_batch_size = 64
 global_batch_size = per_worker_batch_size * num_workers
 multi_worker_dataset = tf.data.Dataset.from_tensor_slices(
