@@ -11,17 +11,16 @@ task_id = tf_config['task']['index']
 num_workers = len(tf_config['cluster']['worker'])
 print(tf_config)
 
-from mn import build_model
-#def build_model():
-#    model = keras.Sequential()
-#    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
+def build_model():
+    model = keras.Sequential()
+    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
 #    model.add(keras.layers.MaxPooling2D((2, 2)))
 #    model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
 #    model.add(keras.layers.MaxPooling2D((2, 2)))
-#    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Flatten())
 #    model.add(keras.layers.Dense(64, activation='relu'))
-#    model.add(keras.layers.Dense(10, activation='softmax'))
-#    return model
+    model.add(keras.layers.Dense(10, activation='softmax'))
+    return model
 
 
 communication_options = tf.distribute.experimental.CommunicationOptions(implementation=tf.distribute.experimental.CommunicationImplementation.RING) # support CPU
