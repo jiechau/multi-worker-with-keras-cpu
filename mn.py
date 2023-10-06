@@ -58,8 +58,8 @@ model.fit(multi_worker_dataset, epochs=5, steps_per_epoch=int(60000/global_batch
 
 # evaluate
 loss, accuracy = model.evaluate(x_test, y_test)
-print('global_batch_size', global_batch_size)
 print(accuracy)
+print('global_batch_size', global_batch_size)
 
 # this way, every worker save model
 # but not a good practice
